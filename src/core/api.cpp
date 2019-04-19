@@ -47,6 +47,7 @@
 #include "cameras/orthographic.h"
 #include "cameras/perspective.h"
 #include "cameras/realistic.h"
+#include "cameras/uv.h"
 #include "filters/box.h"
 #include "filters/gaussian.h"
 #include "filters/mitchell.h"
@@ -58,6 +59,8 @@
 #include "integrators/ao.h"
 #include "integrators/path.h"
 #include "integrators/sppm.h"
+#include "integrators/position.h"
+#include "integrators/mask.h"
 #include "integrators/volpath.h"
 #include "integrators/whitted.h"
 #include "lights/diffuse.h"
@@ -810,6 +813,9 @@ Camera *MakeCamera(const std::string &name, const ParamSet &paramSet,
                                        mediumInterface.outside);
     else if (name == "environment")
         camera = CreateEnvironmentCamera(paramSet, animatedCam2World, film,
+                                         mediumInterface.outside);
+    else if (name == "uv")
+        camera = CreateUvCamera(paramSet, animatedCam2World, film,
                                          mediumInterface.outside);
     else
         Warning("Camera \"%s\" unknown.", name.c_str());
@@ -1695,6 +1701,10 @@ Integrator *RenderOptions::MakeIntegrator() const {
         integrator = CreateAOIntegrator(IntegratorParams, sampler, camera);
     } else if (IntegratorName == "sppm") {
         integrator = CreateSPPMIntegrator(IntegratorParams, camera);
+    } else if (IntegratorName == "position") {
+        integrator = CreatePositionIntegrator(IntegratorParams, sampler, camera);
+    } else if (IntegratorName == "mask") {
+        integrator = CreateMaskIntegrator(IntegratorParams, sampler, camera);
     } else {
         Error("Integrator \"%s\" unknown.", IntegratorName.c_str());
         return nullptr;

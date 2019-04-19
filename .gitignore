@@ -2,4 +2,6 @@
 src/build
 src/bin
 src/objs
+build/
+scenes/geometry
 .sconsign.dblite
